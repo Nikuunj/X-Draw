@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { CrateUserSchema } from '@repo/common/types'
 
 const app = express();
 
@@ -16,8 +17,14 @@ app.post("/signin", (req: Request, res: Response) => {
 });
 
 app.post("/signup", (req: Request, res: Response) => {
+    const verify = CrateUserSchema.safeParse(req.body);
+    if(!verify.success) {
+        res.json({
+            msg: 'plz pass valid input'
+        }).status(422)
+        return
+    }
     const { username, password } = req.body;
-
     console.log("Received credentials:", { username, password });
 
     res.json({
