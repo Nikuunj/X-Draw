@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/middleware/roommiddleware.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/middleware/roommiddleware.ts","./src/routes/auth.ts","./src/routes/createroom.ts"],"version":"5.8.3"}

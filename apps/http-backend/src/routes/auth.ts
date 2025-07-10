@@ -1,10 +1,39 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
+// import { prismaClient } from '@repo/db/client';
+import { CrateUserSchema, SignInUserSchema } from "@repo/common/types";
 
-const authRouter: Router = Router();
+export const authRouter: Router = Router();
 
-authRouter.post("/login", (req, res) => {
-     // Handle login logic here
-     res.send("Login endpoint");
+authRouter.post("/signin", async (req: Request, res: Response) => {
+     const verify = SignInUserSchema.safeParse(req.body);
+     if(!verify.success) {
+          res.json({
+               msg: 'plz pass valid input'
+          }).status(422)
+          return
+     }
+
+     const { username, password } = req.body;
+
+     console.log("Received credentials:"),
+
+     res.json({
+          msg: "user login"
+     })
 });
 
-export default authRouter;
+authRouter.post('/signup', async (req, res) => {
+     const verify = CrateUserSchema.safeParse(req.body);
+     if(!verify.success) {
+          res.json({
+               msg: 'plz pass valid input'
+          }).status(422)
+          return
+     }
+     const { username, password } = req.body;
+     console.log("Received credentials:", { username, password });
+
+     res.json({
+          msg: "user signup"
+     });
+})
