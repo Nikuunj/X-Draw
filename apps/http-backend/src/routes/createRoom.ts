@@ -1,10 +1,12 @@
 import { CreateRoomSchema } from "@repo/common/types";
 import { Request, Response, Router } from "express";
+import { authMiddleware } from "../middleware/authMiddleware";
+import { prismaClient } from "@repo/db/client";
 
 export const createRoomRouter: Router = Router();
 
 
-createRoomRouter.post('/create-room', (req: Request, res: Response) => {
+createRoomRouter.post('/create-room', authMiddleware, async (req: Request, res: Response) => {
      const verify = CreateRoomSchema.safeParse(req.body);
      if(!verify.success) {
           res.json({
@@ -12,5 +14,22 @@ createRoomRouter.post('/create-room', (req: Request, res: Response) => {
           }).status(422)
           return
      }
-     res.status(200).json({ status: "create room" });
+
+     const userId = req.userId ?? "";
+
+     try {
+          const room = await prismaClient.room.create({
+               data: {
+                    slug: verify.data.name,
+                    adminId: userId
+               }
+          })
+          res.status(200).json({
+               roomId: room.id
+          });
+     } catch (e) {
+          res.status(500).json({
+               massege: 'Internal server Error / User not found'
+          });
+     }
 })
