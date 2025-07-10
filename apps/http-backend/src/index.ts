@@ -1,11 +1,18 @@
 import express, { Request, Response } from "express";
-import { CrateUserSchema } from '@repo/common/types'
+import { CrateUserSchema, CreateRoomSchema, SignInUserSchema } from '@repo/common/types'
 
 const app = express();
 
 app.use(express.json());
 
 app.post("/signin", (req: Request, res: Response) => {
+    const verify = SignInUserSchema.safeParse(req.body);
+    if(!verify.success) {
+        res.json({
+            msg: 'plz pass valid input'
+        }).status(422)
+        return
+    }
 
     const { username, password } = req.body;
 
@@ -33,7 +40,14 @@ app.post("/signup", (req: Request, res: Response) => {
 });
 
 app.post("/create-room", (req, res) => {
-    res.status(200).json({ status: "running" });
+    const verify = CreateRoomSchema.safeParse(req.body);
+    if(!verify.success) {
+        res.json({
+            msg: 'plz pass valid input'
+        }).status(422)
+        return
+    }
+    res.status(200).json({ status: "create room" });
 });
 
 app.listen(3001, () => {
