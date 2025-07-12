@@ -9,9 +9,9 @@ export const roomRouter: Router = Router();
 roomRouter.post('/create-room', authMiddleware, async (req: Request, res: Response) => {
      const verify = CreateRoomSchema.safeParse(req.body);
      if(!verify.success) {
-          res.json({
-               msg: 'plz pass valid input'
-          }).status(422)
+          res.status(422).json({
+               massege: 'plz pass valid input'
+          })
           return
      }
 

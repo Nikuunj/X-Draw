@@ -12,7 +12,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
           if(typeof decoded == 'string') {
                res.status(401).json({
-                    message: "Unauthorized"
+                    massege: "Unauthorized"
                })
                return
           }
@@ -22,12 +22,12 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
                next();
           } else {
                res.status(401).json({
-                    message: "Unauthorized"
+                    massege: "Unauthorized"
                })
           }
      } catch {
           res.status(401).json({
-               message: "Unauthorized"
+               massege: "Unauthorized"
           })
      }
 }

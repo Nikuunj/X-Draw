@@ -11,7 +11,7 @@ authRouter.post("/signin", async (req: Request, res: Response) => {
      const verify = SignInUserSchema.safeParse(req.body);
      if(!verify.success) {
           res.json({
-               msg: 'plz pass valid input'
+               massege: 'plz pass valid input'
           }).status(422)
           return
      }
@@ -56,9 +56,9 @@ authRouter.post('/signup', async (req, res) => {
 
      const verify = CrateUserSchema.safeParse(req.body);
      if(!verify.success) {
-          res.json({
-               msg: 'plz pass valid input'
-          }).status(422)
+          res.status(422).json({
+               massege: 'plz pass valid input'
+          })
           return
      }
 
@@ -77,8 +77,8 @@ authRouter.post('/signup', async (req, res) => {
                userId: user.id
           });
      } catch (e) {
-          res.json({
-               messege: 'User already exist with this username'
-          }).status(411)
+          res.status(411).json({
+               massege: 'User already exist with this username'
+          })
      }
 })
