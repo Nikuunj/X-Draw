@@ -50,11 +50,9 @@ roomRouter.get('/chat/:roomId', authMiddleware, async (req: Request, res: Respon
      })
 })
 
-roomRouter.get('/room/:slug', authMiddleware, async (req: Request, res: Response) => {
+roomRouter.get('/:slug', authMiddleware, async (req: Request, res: Response) => {
      const slug = req.params.slug;
      try {
-
-
           const room = await prismaClient.room.findFirst({
                where: {
                     slug
