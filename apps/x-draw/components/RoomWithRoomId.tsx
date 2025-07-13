@@ -1,7 +1,7 @@
 "use client"
-
 import { getRoomId } from "@/actions/room"
 import { useEffect, useState } from "react"
+import RoomCanvas from "./RoomCanvas";
 
 function RoomWithRoomId({ slug }: { slug: string }) {
      const [roomId, setRoomId] = useState("")
@@ -17,7 +17,7 @@ function RoomWithRoomId({ slug }: { slug: string }) {
           fetchRoomId();
      }, [slug])
      return (
-          <div>RoomWithRoomId {roomId}</div>
+          <RoomCanvas roomId={roomId} />
      )
 }
 
