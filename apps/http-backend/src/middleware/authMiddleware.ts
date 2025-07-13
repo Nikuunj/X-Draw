@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWT_SECRET  }  from '@repo/backend-common/config'
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -20,14 +20,17 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
           if (decoded && decoded.userId) {
                req.userId = decoded.userId;
                next();
+               return
           } else {
                res.status(401).json({
                     massege: "Unauthorized"
                })
+               return
           }
      } catch {
           res.status(401).json({
                massege: "Unauthorized"
           })
+          return
      }
 }

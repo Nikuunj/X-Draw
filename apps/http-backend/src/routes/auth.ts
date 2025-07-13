@@ -10,9 +10,9 @@ export const authRouter: Router = Router();
 authRouter.post("/signin", async (req: Request, res: Response) => {
      const verify = SignInUserSchema.safeParse(req.body);
      if(!verify.success) {
-          res.json({
+          res.status(422).json({
                massege: 'plz pass valid input'
-          }).status(422)
+          })
           return
      }
 
