@@ -8,7 +8,6 @@ export async function signin({ username, password }: signinType): Promise<boolea
                username,
                password
           })
-          console.log(data.token);
           localStorage.setItem('token', data.token);
           return true;
      } catch (e) {
