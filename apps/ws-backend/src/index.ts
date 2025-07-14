@@ -50,7 +50,7 @@ wss.on("connection", (ws, request) => {
           rooms: [],
           ws
      })
-     ws.on("message",  function message(data) { 
+     ws.on("message",  async (data) => { 
           const parsedData = JSON.parse(data as unknown as string);
 
           if(parsedData.type === 'join_room') {
@@ -68,7 +68,14 @@ wss.on("connection", (ws, request) => {
 
           if(parsedData.type === 'chat') {
                const roomId = parsedData.roomId;
-               const massege = parsedData.massege;               
+               const massege = parsedData.massege;      
+               await prismaClient.chatHistory.create({
+                    data: {
+                         roomId,
+                         message: massege,
+                         userId
+                    }
+               })                        
                users.forEach(user => {
                     if(user.userId === userId) {
                          return;

@@ -1,3 +1,5 @@
+import { getRoomChat } from "../room";
+
 type Shape = {
      type: SelectShapeType.Rect
      x: number,
@@ -49,7 +51,15 @@ export class Game {
      }
 
      async init() {
-          // make be call and fetch existing shape from be and update existing state variable
+          const oldShape = await getRoomChat({ roomId: this.roomId });
+          if(!oldShape) {
+               return;
+          }
+          
+          oldShape.forEach(old => {
+               const parseShape = JSON.parse(old.message);
+               this.existingShapes.push(parseShape);
+          })
           this.clearCanvas();
      }
 
