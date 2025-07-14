@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
+import Canvas from "./Canvas";
 
 function RoomCanvas({ roomId }: { roomId: string }) {
 
@@ -37,7 +38,9 @@ function RoomCanvas({ roomId }: { roomId: string }) {
     }
 
      return (
-          <div>RoomCanvas {roomId}</div>
+          <div className="overflow-hidden max-h-screen">
+               <Canvas roomId={roomId} socket={socket}/>
+          </div>
      )
 }
 
