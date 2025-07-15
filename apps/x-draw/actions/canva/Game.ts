@@ -1,29 +1,37 @@
 import { getRoomChat } from "../room";
 
 type Shape = {
-     type: SelectShapeType.Rect
+     type: SelectShapeType.Rect;
      x: number,
      y: number,
      width: number,
-     height: number
+     height: number;
 } | {
-     type: SelectShapeType.Circle
+     type: SelectShapeType.Circle;
      y: number;
      x: number;
      radiusX: number;
-     radiusY: number
+     radiusY: number;
 } | {
-     type: SelectShapeType.Line
+     type: SelectShapeType.Line;
      startX: number;
      startY: number;
      EndX: number;
      EndY: number
+} | {
+     type: SelectShapeType.Text;
+     startX: number;
+     startY: number;
+     text: string;
+     size: string;
+     style: string;
 }
 
 export enum SelectShapeType {
      Rect = 'rect',
      Circle = 'circle',
-     Line = 'line'
+     Line = 'line',
+     Text = 'text'
 }
 
 export class Game {
@@ -35,6 +43,7 @@ export class Game {
      private startY = 0;
      private clicked: boolean;
      private selectedShape: SelectShapeType;
+     private text = "";
      socket: WebSocket;
      
      constructor(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
@@ -44,10 +53,11 @@ export class Game {
           this.roomId = roomId;
           this.socket = socket;
           this.clicked = false;
-          this.selectedShape = SelectShapeType.Rect;
+          this.selectedShape = SelectShapeType.Text;
           this.init();
           this.reciveSocketMsg();
           this.initMouseEvent();
+          this.initKeyEvent();
      }
 
      async init() {
@@ -65,7 +75,7 @@ export class Game {
 
      clearCanvas() {
           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+          
           this.ctx.strokeStyle = "rgba(255, 255, 255)"
 
           this.existingShapes.forEach(shape => {
@@ -75,8 +85,11 @@ export class Game {
                     this.drawCricle(shape.x, shape.y, shape.radiusX, shape.radiusY)
                } else if (shape.type === SelectShapeType.Line) {
                     this.drawLine(shape.startX, shape.startY, shape.EndX, shape.EndY);
+               } else if (shape.type === SelectShapeType.Text) {
+                    this.writeText(shape.startX, shape.startY, shape.text, shape.size, shape.style)
                }
           })
+          this.ctx.fillStyle = 'black';
      }
 
      reciveSocketMsg() {
@@ -94,6 +107,51 @@ export class Game {
           this.selectedShape = shape;
      }
 
+     initKeyEvent() {
+          this.canvas.setAttribute('tabindex', '0');
+          this.canvas.addEventListener('keydown', this.keyWriteDown) 
+          this.canvas.focus();
+     }
+
+     keyWriteDown = (e: KeyboardEvent) => {
+          if(this.selectedShape !== SelectShapeType.Text) {
+               return;
+          }
+          if(e.code === 'Enter') {
+               this.storeText();
+               return;
+          }
+          if(this.selectedShape !== SelectShapeType.Text) {
+               return;
+          }
+          this.text += e.key;
+          this.writeText(this.startX, this.startY, this.text, "30px", "Arial")
+     }
+
+     writeText = (x: number, y: number, text: string, size: string, style: string) => {
+          this.ctx.fillStyle = "white";
+          this.ctx.font = size + " " + style;
+          this.ctx.fillText(text, x, y);
+     }
+
+     storeText = () => {
+          const shape: Shape = {
+                    type: SelectShapeType.Text,
+                    text: this.text,
+                    startX: this.startX,
+                    startY: this.startY,
+                    size: "30px",
+                    style: "Arial"
+          }    
+          this.existingShapes.push(shape);
+          this.socket.send(JSON.stringify({
+               type: 'chat',
+               massege: JSON.stringify(shape),
+               roomId: this.roomId
+          }));
+          this.text = "";
+     }
+
      initMouseEvent() {
           this.canvas.addEventListener('mousedown', this.mouseDown)
           this.canvas.addEventListener('mouseup', this.mouseUp)
@@ -101,6 +159,9 @@ export class Game {
      }
 
      mouseDown = (e: MouseEvent) => {
+          if(this.text) {
+               this.storeText();
+          }
           this.startX = e.clientX;
           this.startY = e.clientY;
           this.clicked = true;
@@ -207,5 +268,6 @@ export class Game {
           this.canvas.removeEventListener('mousedown', this.mouseDown)
           this.canvas.removeEventListener('mouseup', this.mouseUp)
           this.canvas.removeEventListener('mousemove', this.mouseMove)
+          this.canvas.removeEventListener('keydown', this.keyWriteDown)
      }
 }

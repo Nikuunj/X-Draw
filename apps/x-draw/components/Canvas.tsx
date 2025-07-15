@@ -7,14 +7,14 @@ import ToolKit from './ui/ToolKit';
 function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket }) {
      const canvasRef = useRef<HTMLCanvasElement | null>(null);
      const [game, setGame] = useState<Game>()
-     const [shape, setShape] = useState<SelectShapeType>(SelectShapeType.Rect);
+     const [shape, setShape] = useState<SelectShapeType>(SelectShapeType.Text);
 
      useEffect(() => {
           if(!game) {
                return;
           }
           game.setShape(shape);
-     },[shape])
+     },[shape, game])
 
      useEffect(() => {
           if(canvasRef.current) {
