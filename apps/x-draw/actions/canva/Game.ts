@@ -117,13 +117,28 @@ export class Game {
           if(this.selectedShape !== SelectShapeType.Text) {
                return;
           }
-          if(e.code === 'Enter') {
+          if(e.code === 'Enter' || e.key == 'Enter') {
                this.storeText();
                return;
           }
           if(this.selectedShape !== SelectShapeType.Text) {
                return;
           }
+          const specialKeys = [
+               'Control', 'Alt', 'Shift', 'Meta', 'Tab', 'Escape', 'CapsLock',
+               'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+               'Home', 'End', 'PageUp', 'PageDown', 'Insert', 'Delete',
+               'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'NumLock',
+          ];
+          
+          if (e.ctrlKey || e.altKey || e.metaKey) {
+               return;
+          }
+          
+          if (specialKeys.includes(e.key)) {
+               return;
+          }
+          this.clearCanvas();
           this.text += e.key;
           this.writeText(this.startX, this.startY, this.text, "30px", "Arial")
      }
@@ -135,6 +150,9 @@ export class Game {
      }
 
      storeText = () => {
+          if(!this.text) {
+               return;
+          }
           const shape: Shape = {
                     type: SelectShapeType.Text,
                     text: this.text,
@@ -159,9 +177,7 @@ export class Game {
      }
 
      mouseDown = (e: MouseEvent) => {
-          if(this.text) {
-               this.storeText();
-          }
+          this.storeText();
           this.startX = e.clientX;
           this.startY = e.clientY;
           this.clicked = true;
