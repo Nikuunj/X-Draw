@@ -3,6 +3,7 @@
 import { ArrowRight, Download, Zap } from "lucide-react"
 import Button from "./ui/Button"
 import Glow from "./ui/Glow"
+import HeroCanva from "./ui/HeroCanva"
 
 function HeroSection() {
      return (
@@ -30,17 +31,10 @@ function HeroSection() {
                               variant="primary"
                               handleClick={() => console.log("Drawing...")}
                          />
-
-                         <Button
-                              text="Download"
-                              iconLeft={Download}
-                              variant="secondary"
-                              handleClick={() => console.log("Downloading...")}
-                         />
                     </div>
                </div>  
                <div className=" w-full flex justify-center items-center">
-                    right
+                    <HeroCanva />
                </div>
           </div>
      )

@@ -1,8 +1,24 @@
 import { ReactNode } from "react"
+import { motion } from "framer-motion"
 
-function Glow({ children }: { children: ReactNode }) {
+function Glow({ children, className }: { children: ReactNode, className?: string }) {
      return (
-          <div className={`drop-shadow-[0px_0px_33px_#32C3FF]`}>{children}</div>
+          <motion.div 
+               animate={{
+                    filter: [
+                         "drop-shadow(0 0 35px #5ED1FF)",
+                         "drop-shadow(0 0 35px #2199E8)",
+                         "drop-shadow(0 0 35px #5ED1FF)",
+                    ],
+               }}
+               transition={{
+                    duration: 2.0,
+                    repeat: Infinity,
+               }}
+               className={`${className} `}
+          >
+               {children}
+          </motion.div>
      )
 }
 

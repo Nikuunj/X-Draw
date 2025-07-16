@@ -28,7 +28,7 @@ function Button({
      return (
           <button
                onClick={handleClick}
-               className={`${baseStyles} ${variants[variant]} ${className}`}
+               className={`${baseStyles} hover:-rotate-3 ${variants[variant]} ${className}`}
           >
                {IconLeft && <IconLeft size={18} />}
                <span>{text}</span>
