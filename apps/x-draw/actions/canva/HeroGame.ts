@@ -48,6 +48,7 @@ export class HeroGame {
      }
 
      setShape(shape : SelectShapeType) {
+          this.clicked = false;
           this.selectedShape = shape;
      }
 
