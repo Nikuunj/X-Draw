@@ -1,83 +1,38 @@
-import { getRoomChat } from "../room";
+import { SelectShapeType, Shape } from "./Game";
 
-export type Shape = {
-     type: SelectShapeType.Rect;
-     x: number,
-     y: number,
-     width: number,
-     height: number;
-} | {
-     type: SelectShapeType.Circle;
-     y: number;
-     x: number;
-     radiusX: number;
-     radiusY: number;
-} | {
-     type: SelectShapeType.Line;
-     startX: number;
-     startY: number;
-     EndX: number;
-     EndY: number
-} | {
-     type: SelectShapeType.Text;
-     startX: number;
-     startY: number;
-     text: string;
-     size: string;
-     style: string;
-}
-
-export enum SelectShapeType {
-     Rect = 'rect',
-     Circle = 'circle',
-     Line = 'line',
-     Text = 'text'
-}
-
-export class Game {
+export class HeroGame {
      private canvas: HTMLCanvasElement;
      private ctx: CanvasRenderingContext2D;
-     private roomId: string;
      private existingShapes: Shape[]
      private startX = 0;
      private startY = 0;
      private clicked: boolean;
      private selectedShape: SelectShapeType;
+     private rect: DOMRect;
      private text = "";
-     socket: WebSocket;
      
-     constructor(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
+     constructor(canvas: HTMLCanvasElement) {
           this.canvas = canvas;
           this.ctx = canvas.getContext('2d')!
           this.existingShapes = [];
-          this.roomId = roomId;
-          this.socket = socket;
           this.clicked = false;
-          this.selectedShape = SelectShapeType.Text;
-          this.init();
-          this.reciveSocketMsg();
+          this.selectedShape = SelectShapeType.Rect;
+          this.rect = canvas.getBoundingClientRect();
           this.initMouseEvent();
           this.initKeyEvent();
      }
 
-     async init() {
-          const oldShape = await getRoomChat({ roomId: this.roomId });
-          if(!oldShape) {
-               return;
-          }
-          
-          oldShape.forEach(old => {
-               const parseShape = JSON.parse(old.message);
-               this.existingShapes.push(parseShape);
-          })
-          this.clearCanvas();
+     // Helper function to get canvas coordinates
+     private getCanvasCoordinates(e: MouseEvent): { x: number, y: number } {
+          return {
+               x: e.clientX - this.rect.left,
+               y: e.clientY - this.rect.top
+          };
      }
 
      clearCanvas() {
           this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-          
           this.ctx.strokeStyle = "rgba(255, 255, 255)"
-
           this.existingShapes.forEach(shape => {
                if(shape.type === SelectShapeType.Rect) {
                     this.drawRect(shape.x, shape.y, shape.width, shape.height)
@@ -90,17 +45,6 @@ export class Game {
                }
           })
           this.ctx.fillStyle = 'black';
-     }
-
-     reciveSocketMsg() {
-          this.socket.onmessage = (event) => {
-               const msg = JSON.parse(event.data)
-               if(msg.type === 'chat') {
-                    const shape = JSON.parse(msg.massege)
-                    this.existingShapes.push(shape);
-                    this.clearCanvas();
-               }
-          }
      }
 
      setShape(shape : SelectShapeType) {
@@ -138,9 +82,15 @@ export class Game {
           if (specialKeys.includes(e.key)) {
                return;
           }
+          if(e.key === 'Backspace') {
+               console.log('here');
+               this.text = this.text.slice(0, this.text.length - 1);
+          } else {
+               this.text += e.key;
+          }
+          const scrollY = window.scrollY;
           this.clearCanvas();
-          this.text += e.key;
-          this.writeText(this.startX, this.startY, this.text, "30px", "Arial")
+          this.writeText(this.startX, this.startY + scrollY, this.text, "30px", "Arial")
      }
 
      writeText = (x: number, y: number, text: string, size: string, style: string) => {
@@ -153,20 +103,16 @@ export class Game {
           if(!this.text) {
                return;
           }
+          const scrollY = window.scrollY;
           const shape: Shape = {
                     type: SelectShapeType.Text,
                     text: this.text,
                     startX: this.startX,
-                    startY: this.startY,
-                    size: "30px",
+                    startY: this.startY + scrollY,
+                    size: "30px", 
                     style: "Arial"
           }    
           this.existingShapes.push(shape);
-          this.socket.send(JSON.stringify({
-               type: 'chat',
-               massege: JSON.stringify(shape),
-               roomId: this.roomId
-          }));
           this.text = "";
      }
 
@@ -178,69 +124,66 @@ export class Game {
 
      mouseDown = (e: MouseEvent) => {
           this.storeText();
-          this.startX = e.clientX;
-          this.startY = e.clientY;
+          const coords = this.getCanvasCoordinates(e);
+          const scrollY = window.scrollY;
+          this.startX = coords.x;
+          this.startY = coords.y;
           this.clicked = true;
      }
 
      mouseUp = (e: MouseEvent) => {
           this.clicked = false;
           let shape: Shape | null = null;
-
+          const coords = this.getCanvasCoordinates(e);
+          const scrollY = window.scrollY;
           if(this.selectedShape === SelectShapeType.Rect) {
                shape = {
                     type: this.selectedShape,
                     x: this.startX,
-                    y: this.startY,
-                    width: e.clientX - this.startX,
-                    height: e.clientY - this.startY
+                    y: this.startY + scrollY,
+                    width: coords.x - this.startX,
+                    height: coords.y - this.startY
                }    
           } else if(this.selectedShape === SelectShapeType.Circle) {
                shape = {
                     type: this.selectedShape,
                     x: this.startX,
-                    y: this.startY,
-                    radiusX: this.radiusX(e),
-                    radiusY: this.radiusY(e),
+                    y: this.startY + scrollY,
+                    radiusX: coords.x,
+                    radiusY: coords.y + scrollY,
                }
           } else if(this.selectedShape === SelectShapeType.Line) {
                shape = {
                     type: this.selectedShape,
                     startX: this.startX,
-                    startY: this.startY,
-                    EndX: e.clientX,
-                    EndY: e.clientY
+                    startY: this.startY + scrollY,
+                    EndX: coords.x,
+                    EndY: coords.y + scrollY
                }
           }
           if(!shape) {
                return;
           }
           this.existingShapes.push(shape);
-          this.socket.send(JSON.stringify({
-               type: 'chat',
-               massege: JSON.stringify(shape),
-               roomId: this.roomId
-          }));
      }
 
      mouseMove = (e: MouseEvent) => {
           if(!this.clicked) {
                return;
           }
+          
+          const coords = this.getCanvasCoordinates(e);
           this.clearCanvas();
-          this.ctx.strokeStyle = "rgba(255, 255, 255)"
+          
+          const scrollY = window.scrollY;
           if(this.selectedShape === SelectShapeType.Rect) {
-               const width = e.clientX - this.startX;
-               const height = e.clientY - this.startY;
-               this.drawRect(this.startX, this.startY, width, height);
+               const width = coords.x - this.startX;
+               const height = coords.y - this.startY;
+               this.drawRect(this.startX, this.startY  + scrollY, width, height);
           } else if (this.selectedShape === SelectShapeType.Circle) {
-               const radiusX = this.radiusX(e);
-               const radiusY = this.radiusY(e);
-               this.drawCricle(this.startX, this.startY, radiusX, radiusY);
+               this.drawCricle(this.startX, this.startY + scrollY, coords.x, coords.y + scrollY);
           } else if (this.selectedShape === SelectShapeType.Line) {
-               const x = e.clientX;
-               const y = e.clientY;
-               this.drawLine(this.startX, this.startY, x, y);
+               this.drawLine(this.startX, this.startY + scrollY, coords.x, coords.y + scrollY);
           }
      }
 
@@ -267,19 +210,35 @@ export class Game {
           this.ctx.strokeRect(x, y, width, height);   
      }
      
-     drawCricle = (x: number, y: number, radiusX: number, radiusY: number) => {
+     drawCricle = (x1: number, y1: number, x2: number, y2: number) => {
+          var radiusX = (x2 - x1) * 0.588, 
+          radiusY = (y2 - y1) * 0.588, 
+          centerX = x1 + radiusX,    
+          centerY = y1 + radiusY,
+          step = 0.01,               
+          a = step,                  
+          pi2 = Math.PI * 2 - step;  
+          
           this.ctx.beginPath();
-          this.ctx.ellipse(x, y, radiusX, radiusY, 0, 0, 2 * Math.PI);
+
+          this.ctx.moveTo(centerX + radiusX * Math.cos(0),
+                         centerY + radiusY * Math.sin(0));
+          for(; a < pi2; a += step) {
+               this.ctx.lineTo(centerX + radiusX * Math.cos(a),
+                         centerY + radiusY * Math.sin(a));
+          }
+          this.ctx.strokeStyle = 'white';
           this.ctx.stroke();
      }
 
-     radiusX(e: MouseEvent): number {
-          return Math.abs(e.clientX - this.startX ) / 2;
+     radiusX(x: number): number {
+          return Math.abs(x - this.startX) / 2;
      }
 
-     radiusY(e: MouseEvent): number {
-          return Math.abs(e.clientY - this.startY ) / 2;
+     radiusY(y: number): number {
+          return Math.abs(y - this.startY) / 2;
      }
+
      cleanUp() {
           this.canvas.removeEventListener('mousedown', this.mouseDown)
           this.canvas.removeEventListener('mouseup', this.mouseUp)
