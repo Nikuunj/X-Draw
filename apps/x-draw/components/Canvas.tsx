@@ -27,7 +27,7 @@ function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket }) {
      }, [canvasRef, socket])
      return (
           <>
-               <canvas ref={canvasRef} className='' height={window.innerHeight} width={window.innerWidth}></canvas>
+               <canvas ref={canvasRef} height={window.innerHeight} width={window.innerWidth}></canvas>
                <ToolKit setShape={setShape} shape={shape}/> 
           </>
      )

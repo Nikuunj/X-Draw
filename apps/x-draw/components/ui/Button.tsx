@@ -18,7 +18,7 @@ function Button({
      variant = "primary",
 }: ButtonProps) {
 
-     const baseStyles = `cursor-pointer rounded-2xl outline-0 transition-all duration-300 px-6 py-3 rounded font-semibold flex items-center gap-2`;
+     const baseStyles = `cursor-pointer rounded-2xl outline-0 transition-all duration-300 px-7 py-3.5 rounded font-semibold flex items-center gap-2`;
 
      const variants = {
           primary: `bg-gradient-to-r from-[#00B4FF] to-[#007AFF] text-white hover:opacity-90`,
