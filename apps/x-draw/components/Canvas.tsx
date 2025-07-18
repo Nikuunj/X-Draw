@@ -2,7 +2,7 @@ import { initDraw } from '@/actions/canva';
 import { Game, SelectShapeType } from '@/actions/canva/Game';
 import { hadUnsupportedValue } from 'next/dist/build/analysis/get-page-static-info';
 import React, { useEffect, useRef, useState } from 'react'
-import ToolKit from './ui/ToolKit';
+import ToolKit from './ui/HeroToolKit';
 
 function Canvas({ roomId, socket }: { roomId: string, socket: WebSocket }) {
      const canvasRef = useRef<HTMLCanvasElement | null>(null);

@@ -22,7 +22,7 @@ function NavBar() {
                               <Github className="w-4.5"/>  <span className="hidden sm:block"> GitHub </span>
                               </a>
                          </div>
-                              <Link href={'/signin'} className="w-full h-full">
+                              <Link href={'/draw'} className="w-full h-full">
                                    <div className="bg-gradient-to-r from-[#00B4FF] to-[#007AFF] min-w-24  py-1.5 px-2.5 sm:px-4 flex items-center rounded-xl justify-center text-center font-bold">
                                         Draw idea
                                    </div>
