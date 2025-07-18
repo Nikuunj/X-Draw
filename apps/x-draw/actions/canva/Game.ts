@@ -1,5 +1,12 @@
 import { getRoomChat } from "../room";
 
+export interface XYType {
+     x1: number;
+     y1: number;
+     x2: number;
+     y2: number;
+}
+
 export type Shape = {
      type: SelectShapeType.Rect;
      x: number,
@@ -25,13 +32,17 @@ export type Shape = {
      text: string;
      size: string;
      style: string;
+} | {
+     type: SelectShapeType.Pen;
+     XY: XYType[];
 }
 
 export enum SelectShapeType {
      Rect = 'rect',
      Circle = 'circle',
      Line = 'line',
-     Text = 'text'
+     Text = 'text',
+     Pen = 'pen'
 }
 
 export class Game {
@@ -241,9 +252,13 @@ export class Game {
                const x = e.clientX;
                const y = e.clientY;
                this.drawLine(this.startX, this.startY, x, y);
+          } else if (this.selectedShape === SelectShapeType.Pen) {
+               const x = e.offsetX;
+               const y = e.offsetY;
+               
           }
      }
-
+     
      drawLine = (x1: number, y1: number, x2: number, y2: number) => {
           this.ctx.beginPath();
           const headlen = 7; 

@@ -1,10 +1,25 @@
+"use client"
 import { ReactNode } from 'react'
+import { motion } from 'framer-motion'
 
 function IconTool({ activated, handleClick, children }: { activated: boolean, handleClick?: () => void, children:  ReactNode })  {
      return (
-          <div className={`${activated ? 'text-red-600 bg-zinc-900 border-green-600' : 'text-white border-zinc-800 bg-zinc-900/0' } cursor-pointer border-1  hover:bg-zinc-900 bg-zinc-900/0 hover:border-zinc-500 rounded-md px-1.5 py-1 flex justify-center
-               transition-all duration-300
-               `} onClick={handleClick}>{children}</div>
+          <motion.div 
+               whileTap={{ y: 150 }} 
+               transition={{
+                    ease: 'easeInOut',
+                    duration: 0.3
+               }}
+               className={`relative 
+                    ${activated ? ' bg-black text-red-600 border-white/0' : 'text-white border-zinc-800 bg-zinc-900/0'} border border-t-0 
+                    cursor-pointer px-2.5 py-1.5 flex justify-center items-center rounded-b-md 
+                    transition-all duration-300
+               `}
+               onClick={handleClick}
+               >
+                    {children}
+               </motion.div>
+
      )  
 }
 

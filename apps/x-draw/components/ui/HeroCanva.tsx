@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import ToolKit from "./ToolKit";
+import HeroToolKit from "./HeroToolKit";
 import { SelectShapeType } from "@/actions/canva/Game";
 import { DotBackgroundDemo } from "./GridDot";
 import { motion } from 'framer-motion';
@@ -65,7 +65,7 @@ function HeroCanva() {
                <div className="absolute inset-0 z-0 flex items-center justify-center rounded-2xl pointer-events-none">
                     <DotBackgroundDemo className={'rounded-2xl'} />
                </div>
-               <ToolKit setShape={setShape} shape={shape}/> 
+               <HeroToolKit setShape={setShape} shape={shape}/> 
                <div className="absolute bottom-4 right-4 z-20  backdrop-blur-sm rounded-xl 
                px-3 py-1.5 text-xs text-muted-foreground border bg-[#0B0F1A] text-[#A6B0C3] border-[#1C2C3E]">
                   Click and drag to draw

@@ -1,4 +1,4 @@
-import { SelectShapeType, Shape } from "./Game";
+import { SelectShapeType, Shape, XYType } from "./Game";
 
 export class HeroGame {
      private canvas: HTMLCanvasElement;
@@ -9,6 +9,7 @@ export class HeroGame {
      private clicked: boolean;
      private selectedShape: SelectShapeType;
      private rect: DOMRect;
+     private penXY: XYType[];
      private text = "";
      
      constructor(canvas: HTMLCanvasElement) {
@@ -18,6 +19,7 @@ export class HeroGame {
           this.clicked = false;
           this.selectedShape = SelectShapeType.Rect;
           this.rect = canvas.getBoundingClientRect();
+          this.penXY = []
           this.initMouseEvent();
           this.initKeyEvent();
      }
@@ -42,6 +44,10 @@ export class HeroGame {
                     this.drawLine(shape.startX, shape.startY, shape.EndX, shape.EndY);
                } else if (shape.type === SelectShapeType.Text) {
                     this.writeText(shape.startX, shape.startY, shape.text, shape.size, shape.style)
+               } else if (shape.type === SelectShapeType.Pen) {
+                    shape.XY.forEach((XY: XYType, _) => {
+                         this.drawPen(XY.x1, XY.y1, XY.x2, XY.y2);
+                    })
                }
           })
           this.ctx.fillStyle = 'black';
@@ -49,6 +55,8 @@ export class HeroGame {
 
      setShape(shape : SelectShapeType) {
           this.clicked = false;
+          this.canvas.classList.add('cursor-default')
+          this.canvas.classList.remove('cursor-crosshair')
           this.selectedShape = shape;
      }
 
@@ -91,7 +99,7 @@ export class HeroGame {
           }
           const scrollY = window.scrollY;
           this.clearCanvas();
-          this.writeText(this.startX, this.startY + scrollY, this.text, "30px", "Arial")
+          this.writeText(this.startX, this.startY, this.text, "30px", "Arial")
      }
 
      writeText = (x: number, y: number, text: string, size: string, style: string) => {
@@ -109,7 +117,7 @@ export class HeroGame {
                     type: SelectShapeType.Text,
                     text: this.text,
                     startX: this.startX,
-                    startY: this.startY + scrollY,
+                    startY: this.startY,
                     size: "30px", 
                     style: "Arial"
           }    
@@ -125,15 +133,17 @@ export class HeroGame {
 
      mouseDown = (e: MouseEvent) => {
           this.storeText();
-          const coords = this.getCanvasCoordinates(e);
-          const scrollY = window.scrollY;
-          this.startX = coords.x;
-          this.startY = coords.y;
+          this.startX = e.offsetX;
+          this.startY = e.offsetY;
           this.clicked = true;
+          this.canvas.classList.remove('cursor-default')
+          this.canvas.classList.add('cursor-crosshair')
      }
 
      mouseUp = (e: MouseEvent) => {
           this.clicked = false;
+          this.canvas.classList.add('cursor-default')
+          this.canvas.classList.remove('cursor-crosshair')
           let shape: Shape | null = null;
           const coords = this.getCanvasCoordinates(e);
           const scrollY = window.scrollY;
@@ -141,26 +151,32 @@ export class HeroGame {
                shape = {
                     type: this.selectedShape,
                     x: this.startX,
-                    y: this.startY + scrollY,
-                    width: coords.x - this.startX,
-                    height: coords.y - this.startY
+                    y: this.startY,
+                    width: e.offsetX - this.startX,
+                    height: e.offsetY - this.startY
                }    
           } else if(this.selectedShape === SelectShapeType.Circle) {
                shape = {
                     type: this.selectedShape,
                     x: this.startX,
-                    y: this.startY + scrollY,
-                    radiusX: coords.x,
-                    radiusY: coords.y + scrollY,
+                    y: this.startY,
+                    radiusX: e.offsetX,
+                    radiusY: e.offsetY,
                }
           } else if(this.selectedShape === SelectShapeType.Line) {
                shape = {
                     type: this.selectedShape,
                     startX: this.startX,
-                    startY: this.startY + scrollY,
-                    EndX: coords.x,
-                    EndY: coords.y + scrollY
+                    startY: this.startY,
+                    EndX: e.offsetX,
+                    EndY: e.offsetY
                }
+          } else if (this.selectedShape === SelectShapeType.Pen) {
+               shape = {
+                    type: this.selectedShape,
+                    XY: this.penXY
+               }
+               this.penXY = [];
           }
           if(!shape) {
                return;
@@ -172,22 +188,38 @@ export class HeroGame {
           if(!this.clicked) {
                return;
           }
-          
-          const coords = this.getCanvasCoordinates(e);
           this.clearCanvas();
           
-          const scrollY = window.scrollY;
           if(this.selectedShape === SelectShapeType.Rect) {
-               const width = coords.x - this.startX;
-               const height = coords.y - this.startY;
-               this.drawRect(this.startX, this.startY  + scrollY, width, height);
+               const width = e.offsetX - this.startX;
+               const height = e.offsetY - this.startY;
+               this.drawRect(this.startX, this.startY, width, height);
           } else if (this.selectedShape === SelectShapeType.Circle) {
-               this.drawCricle(this.startX, this.startY + scrollY, coords.x, coords.y + scrollY);
+               this.drawCricle(this.startX, this.startY, e.offsetX, e.offsetY);
           } else if (this.selectedShape === SelectShapeType.Line) {
-               this.drawLine(this.startX, this.startY + scrollY, coords.x, coords.y + scrollY);
+               this.drawLine(this.startX, this.startY, e.offsetX, e.offsetY);
+          } else if (this.selectedShape === SelectShapeType.Pen)  {
+               const x = e.offsetX;
+               const y = e.offsetY;
+               this.penXY.push({
+                    x1: this.startX,
+                    y1: this.startY,
+                    x2: x,
+                    y2: y
+               })
+               this.penXY.forEach((XY: XYType, _) => {
+                    this.drawPen(XY.x1, XY.y1, XY.x2, XY.y2);
+               });
+               [this.startX, this.startY] = [x, y];
           }
      }
 
+     drawPen = (x1: number, y1: number, x2: number, y2: number) => { 
+          this.ctx.beginPath();
+          this.ctx.moveTo(x1, y1);
+          this.ctx.lineTo(x2, y2);
+          this.ctx.stroke();
+     }
      drawLine = (x1: number, y1: number, x2: number, y2: number) => {
           this.ctx.beginPath();
           const headlen = 7; 
