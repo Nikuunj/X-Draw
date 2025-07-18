@@ -1,4 +1,4 @@
-import { createRoomType } from '@repo/common/types';
+import { createRoomType } from '@/types/types';
 import axios, { AxiosResponse } from 'axios';
 import toast from 'react-hot-toast';
 

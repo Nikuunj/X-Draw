@@ -67,8 +67,11 @@ export default function SecondSection() {
 
         const newPaths: string[] = [];
         for (let i = 0; i < positions.length - 1; i++) {
-            // @ts-ignore
-        newPaths.push(createWavePath(positions[i], positions[i + 1]));
+            const from = positions[i];
+            const to = positions[i + 1];
+            if (from && to) {
+                newPaths.push(createWavePath(from, to));
+            }
         }
 
         setPaths(newPaths);

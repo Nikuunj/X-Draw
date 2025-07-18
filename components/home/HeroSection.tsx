@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight, Download, Zap } from "lucide-react"
+import { ArrowRight, Zap } from "lucide-react"
 import Button from "../ui/Button"
 import Glow from "../ui/Glow"
 import HeroCanva from "../ui/HeroCanva"

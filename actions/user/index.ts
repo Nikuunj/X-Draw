@@ -1,4 +1,4 @@
-import { signinType, signupType } from '@repo/common/types'
+import { signinType, signupType } from '@/types/types';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
