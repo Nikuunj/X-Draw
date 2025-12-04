@@ -4,7 +4,6 @@ const client = createClient();
 import { prismaClient } from '@repo/db/client'
 
 async function processSubmission(submission: string) {
-  // console.log(submission);
   const parseObj = JSON.parse(submission)
   try {
     await prismaClient.chatHistory.create({
