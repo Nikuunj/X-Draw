@@ -13,10 +13,11 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
     "@repo/backend-common": "workspace:*",
     "@repo/db": "workspace:*",
-    "@types/ws": "^8.18.1"
+    "@repo/typescript-config": "workspace:*",
+    "@types/ws": "^8.18.1",
+    "redis": "^5.10.0"
   },
   "keywords": [],
   "author": "",
