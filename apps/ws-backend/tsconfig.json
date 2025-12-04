@@ -1,7 +1,9 @@
 {
-    "extends" : "@repo/typescript-config/base.json",
-    "compilerOptions": {
-        "rootDir": "./src",
-        "outDir": "./dist"
-    }
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "rootDir": "./src",
+    "outDir": "./dist"
+  }
 }
