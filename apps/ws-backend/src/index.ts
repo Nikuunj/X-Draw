@@ -78,19 +78,11 @@ wss.on("connection", (ws, request) => {
 
     if (parsedData.type === 'chat') {
       const roomId = parsedData.roomId;
-      const massege = parsedData.massege;
+      const message = parsedData.massege;
       console.log('hi');
 
       try {
-        await client.lPush("problems", "Hi from here");
-        // await prismaClient.chatHistory.create({
-        //   data: {
-        //     roomId,
-        //     message: massege,
-        //     userId
-        //   }
-        // })
-        //
+        await client.lPush("chatHistory", JSON.stringify({ message, roomId, userId }));
         users.forEach(user => {
           if (user.userId === userId) {
             return;
@@ -98,7 +90,7 @@ wss.on("connection", (ws, request) => {
           if (user.rooms.includes(roomId)) {
             user.ws.send(JSON.stringify({
               type: 'chat',
-              massege: massege,
+              massege: message,
               roomId
             }));
           }
