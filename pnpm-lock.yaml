@@ -95,6 +95,15 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
+  apps/worker:
+    devDependencies:
+      '@repo/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+
   apps/ws-backend:
     dependencies:
       '@types/jsonwebtoken':
