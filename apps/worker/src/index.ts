@@ -1,6 +1,9 @@
-
+import { REDIS_URL } from '@repo/backend-common/config'
 import { createClient } from "redis";
-const client = createClient();
+
+const client = createClient({
+  url: REDIS_URL
+});
 import { prismaClient } from '@repo/db/client'
 
 async function processSubmission(submission: string) {

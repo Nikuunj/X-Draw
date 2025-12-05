@@ -1,7 +1,6 @@
 import { WebSocket, WebSocketServer } from "ws";
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '@repo/backend-common/config';
-import { prismaClient } from '@repo/db/client'
+import { JWT_SECRET, REDIS_URL } from '@repo/backend-common/config';
 import { createClient } from "redis";
 
 const wss = new WebSocketServer({ port: 8080 });
@@ -32,7 +31,9 @@ function checkUser(token: string): string | null {
   }
 }
 
-const client = createClient();
+const client = createClient({
+  url: REDIS_URL
+});
 client.on('error', (err) => console.log('Redis Client Error', err));
 async function main() {
   await client.connect();
