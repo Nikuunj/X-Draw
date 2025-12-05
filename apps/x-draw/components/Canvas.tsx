@@ -1,6 +1,4 @@
-import { initDraw } from '@/actions/canva';
 import { Game, SelectShapeType } from '@/actions/canva/Game';
-import { hadUnsupportedValue } from 'next/dist/build/analysis/get-page-static-info';
 import React, { useEffect, useRef, useState } from 'react'
 import ToolKit from './ui/HeroToolKit';
 import { DotBackgroundDemo } from './ui/GridDot';

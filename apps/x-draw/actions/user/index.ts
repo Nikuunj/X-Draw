@@ -1,10 +1,11 @@
+import { HTTP_URL } from '@/config/config';
 import { signinType, signupType } from '@repo/common/types'
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
 export async function signin({ username, password }: signinType): Promise<boolean> {
      try {
-          const { data } = await axios.post('http://localhost:3001/v1/auth/signin', {
+          const { data } = await axios.post(HTTP_URL + '/v1/auth/signin', {
                username,
                password
           })
@@ -21,7 +22,7 @@ export async function signin({ username, password }: signinType): Promise<boolea
 
 export async  function signup({ username, password, name }: signupType): Promise<boolean> {
      try {
-          const { data } = await axios.post('http://localhost:3001/v1/auth/signup', {
+          const { data } = await axios.post(HTTP_URL + '/v1/auth/signup', {
                name,
                username,
                password
