@@ -9,10 +9,12 @@ COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./packages ./packages
 
+COPY ./.env ./.env
 COPY ./turbo.json ./turbo.json
 COPY ./apps/worker ./apps/worker
 
 RUN pnpm i
+RUN pnpm run db:generate
 RUN pnpm run build
 
 CMD ["pnpm", "run", "start:worker"]

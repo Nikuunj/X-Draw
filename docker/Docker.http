@@ -11,8 +11,10 @@ COPY ./packages ./packages
 
 COPY ./turbo.json ./turbo.json
 COPY ./apps/http-backend ./apps/http-backend
+COPY ./.env ./.env
 
 RUN pnpm i
+RUN pnpm run db:generate
 RUN pnpm run build
 
 EXPOSE 3001
