@@ -11,7 +11,9 @@
     "start:x-draw": "cd ./apps/x-draw/ && pnpm run start",
     "start:http": "cd ./apps/http-backend/ && pnpm run start",
     "start:ws": "cd ./apps/ws-backend/ && pnpm run start",
-    "start:worker": "cd ./apps/worker/ && pnpm run start"
+    "start:worker": "cd ./apps/worker/ && pnpm run start",
+    "db:generate": "turbo run db:generate",
+    "db:deploy": "turbo run db:deploy"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

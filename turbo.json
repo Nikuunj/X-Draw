@@ -3,23 +3,49 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "dependsOn": [
+        "^build",
+        "^db:generate"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": [
+        "^check-types"
+      ]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
+    "db:generate": {
+      "cache": false,
+      "outputs": [
+        "node_modules/.prisma/**"
+      ]
+    },
+    "db:deploy": {
+      "cache": false
+    },
     "start": {
-      "dependsOn": ["build"],
-      "inputs": [".env*"],
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        ".env*"
+      ],
       "cache": false,
       "persistent": false
     }
