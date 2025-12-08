@@ -2,6 +2,37 @@ version: '3.8'
 services:
   redis:
     image: redis
-    container_name: redis
     ports: 
       - "6379:6379"
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: x-draw
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  http-backend:
+    context: ./
+    dockerfile: ./docker/Docker.http
+    environment:
+      - DATABASE_URL: postgresql://postgres:postgres@postgres:5432/x-draw
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+
+  ws-backend:
+    context: ./
+    dockerfile: ./docker/Docker.ws 
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+volumes:
+  postgres-data:
