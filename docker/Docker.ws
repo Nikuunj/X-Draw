@@ -9,7 +9,6 @@ COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./packages ./packages
 
-COPY ./.env ./.env
 COPY ./turbo.json ./turbo.json
 COPY ./apps/ws-backend ./apps/ws-backend
 
