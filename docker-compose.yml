@@ -34,5 +34,23 @@ services:
     depends_on:
       - redis
 
+  worker:
+    context: ./
+    dockerfile: ./docker/Docker.worker
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL: postgresql://postgres:postgres@postgres:5432/x-draw
+    depends_on:
+      - redis
+      - postgres
+
+  frontend:
+    context: ./
+    dockerfile: ./docker/Docker.frontend
+    ports:
+      - "3000:3000"
+    environment: 
+      - NEXT_PUBLIC_HTTP_URL=
+      - NEXT_PUBLIC_WS_URL=
 volumes:
   postgres-data:
