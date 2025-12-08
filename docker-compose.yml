@@ -17,40 +17,53 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   http-backend:
-    context: ./
-    dockerfile: ./docker/Docker.http
+    build:
+      context: ./
+      dockerfile: ./docker/Docker.http
     environment:
-      - DATABASE_URL: postgresql://postgres:postgres@postgres:5432/x-draw
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/x-draw
+      - JWT_SECRET=slfsfkfkdhfyureyurehdsjch37837u9fd78d7f8d7d8f
     ports:
       - "3001:3001"
     depends_on:
       - postgres
 
   ws-backend:
-    context: ./
-    dockerfile: ./docker/Docker.ws 
+    build:
+      context: ./
+      dockerfile: ./docker/Docker.ws 
     environment:
       - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=slfsfkfkdhfyureyurehdsjch37837u9fd78d7f8d7d8f
+    ports:
+      - "8080:8080"
     depends_on:
       - redis
 
   worker:
-    context: ./
-    dockerfile: ./docker/Docker.worker
+    build:
+      context: ./
+      dockerfile: ./docker/Docker.worker
     environment:
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL: postgresql://postgres:postgres@postgres:5432/x-draw
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/x-draw
     depends_on:
       - redis
       - postgres
 
   frontend:
-    context: ./
-    dockerfile: ./docker/Docker.frontend
+    build:
+      context: ./
+      dockerfile: ./docker/Docker.frontend
     ports:
       - "3000:3000"
     environment: 
-      - NEXT_PUBLIC_HTTP_URL=
-      - NEXT_PUBLIC_WS_URL=
+      - NEXT_PUBLIC_HTTP_URL=http://http-backend:3001  
+      - NEXT_PUBLIC_WS_URL=ws://ws-backend:8080
+    depends_on:
+      - worker
+      - ws-backend
+      - http-backend
+
 volumes:
   postgres-data:
