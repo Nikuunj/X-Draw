@@ -1,0 +1,23 @@
+
+
+FROM node:22-alpine
+WORKDIR /usr/src/app
+
+RUN npm i -g pnpm
+
+# Copy workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+
+# Copy the entire monorepo (required for pnpm workspaces)
+COPY packages ./packages
+
+# ---- Prisma setup ----
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+# Install repo dependencies
+RUN pnpm install --frozen-lockfile
+
+# Deploy migrations
+RUN pnpm  run db:deploy
+
