@@ -39,6 +39,16 @@ services:
       - "8080:8080"
     depends_on:
       - redis
+ 
+  db-migrator:
+    build:
+      context: ./
+      dockerfile: ./docker/Docker.db
+      args:
+        DATABASE_URL: postgresql://postgres:postgres@postgres:5432/x-draw
+    depends_on:
+      postgres: 
+          condition: service_healthy
 
   worker:
     build:
@@ -55,11 +65,11 @@ services:
     build:
       context: ./
       dockerfile: ./docker/Docker.frontend
+    environment: 
+      - NEXT_PUBLIC_HTTP_URL=http://http-backend:3001
+      - NEXT_PUBLIC_WS_URL=ws://ws-backend:8080
     ports:
       - "3000:3000"
-    environment: 
-      - NEXT_PUBLIC_HTTP_URL=http://http-backend:3001  
-      - NEXT_PUBLIC_WS_URL=ws://ws-backend:8080
     depends_on:
       - worker
       - ws-backend

@@ -13,7 +13,8 @@
     "start:ws": "cd ./apps/ws-backend/ && pnpm run start",
     "start:worker": "cd ./apps/worker/ && pnpm run start",
     "db:generate": "turbo run db:generate",
-    "db:deploy": "turbo run db:deploy"
+    "db:deploy": "turbo run db:deploy",
+    "start:docker": "pnpm run db:deploy && pnpm run start"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

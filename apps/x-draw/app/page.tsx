@@ -7,14 +7,14 @@ import { HTTP_URL, WS_URL } from "@/config/config";
 
 
 export default function Home() {
-    return (
-        <>
-            <NavBar />
-            <div className="space-y-24 md:space-y-11">
-                <HeroSection />
-                <SecondSection />
-            <Footer />
-            </div>
-        </>
-    );
+  return (
+    <>
+      <NavBar />
+      <div className="space-y-24 md:space-y-11">
+        <HeroSection />
+        <SecondSection />
+        <Footer />
+      </div>
+    </>
+  );
 }
