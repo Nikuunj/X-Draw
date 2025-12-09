@@ -2,7 +2,6 @@ import HeroSection from "@/components/home/HeroSection";
 import SecondSection from "@/components/home/SecondSection";
 import { Footer } from "@/components/Footer";
 import NavBar from "@/components/NavBar";
-import { HTTP_URL, WS_URL } from "@/config/config";
 
 
 
