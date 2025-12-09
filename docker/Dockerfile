@@ -16,6 +16,6 @@ RUN pnpm i
 RUN pnpm run db:generate
 RUN pnpm run build
 
-EXPOSE 3000
+EXPOSE 3000 3001 8080
 
 CMD ["pnpm", "run", "start:docker"]
