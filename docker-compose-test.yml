@@ -47,7 +47,7 @@ services:
       args:
         DATABASE_URL: postgresql://postgres:postgres@postgres:5432/x-draw
     depends_on:
-      postgres: 
+      postgres:
           condition: service_healthy
 
   worker:
@@ -70,6 +70,7 @@ services:
       - NEXT_PUBLIC_WS_URL=ws://ws-backend:8080
     ports:
       - "3000:3000"
+    network_mode: "host"
     depends_on:
       - worker
       - ws-backend
